@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: staging-nginx-config
+  namespace: staging
+data:
+  environment: "staging"
+  application: "gitops-platform"
+  version: "1.0"
