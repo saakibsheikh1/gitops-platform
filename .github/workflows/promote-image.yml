@@ -76,7 +76,7 @@ jobs:
           format: table
           exit-code: "1"
           ignore-unfixed: true
-          severity: CRITICAL,HIGH
+          severity: CRITICAL
 
       - name: Update dev manifest
         shell: bash
@@ -87,9 +87,11 @@ jobs:
             "s#image: .*#image: ${ECR_REGISTRY}/${ECR_REPOSITORY}@${DIGEST}#" \
             "$DEV_MANIFEST"
 
+          echo "Updated dev manifest:"
           cat "$DEV_MANIFEST"
 
       - name: Commit dev promotion
+        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -105,6 +107,7 @@ jobs:
       - name: Create staging promotion PR
         env:
           GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
           BRANCH="promotion/staging-${{ steps.image.outputs.tag }}-${GITHUB_RUN_ID}"
 
