@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: staging-nginx
+  namespace: staging
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: staging-nginx
+  template:
+    metadata:
+      labels:
+        app: staging-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27
+          ports:
+            - containerPort: 80
