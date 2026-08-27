@@ -1,0 +1,173 @@
+{
+  "generated_at": "2026-08-27T18:59:45.254961+05:30",
+  "summary": {
+    "total_applications": 3,
+    "healthy": 3,
+    "degraded": 0,
+    "progressing": 0,
+    "unknown": 0
+  },
+  "applications": [
+    {
+      "name": "dev-app",
+      "namespace": "dev",
+      "sync_status": "Synced",
+      "health_status": "Healthy",
+      "git_revision": "227d3b7a69b729a77660526d03eaa12fb3bd0048",
+      "target_revision": "main",
+      "repository": "https://github.com/saakibsheikh1/gitops-platform.git",
+      "manifest_path": "manifests/dev",
+      "resources": [
+        {
+          "kind": "Pod",
+          "name": "dev-nginx-5b89688b44-jbpbt",
+          "namespace": "dev"
+        },
+        {
+          "kind": "Pod",
+          "name": "dev-nginx-5b89688b44-sw6k9",
+          "namespace": "dev"
+        },
+        {
+          "kind": "Pod",
+          "name": "dev-nginx-5b89688b44-wt94v",
+          "namespace": "dev"
+        },
+        {
+          "kind": "Service",
+          "name": "dev-nginx-service",
+          "namespace": "dev"
+        },
+        {
+          "kind": "Deployment",
+          "name": "dev-nginx",
+          "namespace": "dev"
+        },
+        {
+          "kind": "ReplicaSet",
+          "name": "dev-nginx-577d848d69",
+          "namespace": "dev"
+        },
+        {
+          "kind": "ReplicaSet",
+          "name": "dev-nginx-5b69fcd8d",
+          "namespace": "dev"
+        },
+        {
+          "kind": "ReplicaSet",
+          "name": "dev-nginx-5b89688b44",
+          "namespace": "dev"
+        },
+        {
+          "kind": "ReplicaSet",
+          "name": "dev-nginx-6744fd49c8",
+          "namespace": "dev"
+        },
+        {
+          "kind": "ReplicaSet",
+          "name": "dev-nginx-7b46b59ff8",
+          "namespace": "dev"
+        }
+      ]
+    },
+    {
+      "name": "production-app",
+      "namespace": "production",
+      "sync_status": "Synced",
+      "health_status": "Healthy",
+      "git_revision": "227d3b7a69b729a77660526d03eaa12fb3bd0048",
+      "target_revision": "main",
+      "repository": "https://github.com/saakibsheikh1/gitops-platform.git",
+      "manifest_path": "manifests/production",
+      "resources": [
+        {
+          "kind": "Pod",
+          "name": "production-nginx-5bf8bdf595-rc7mb",
+          "namespace": "production"
+        },
+        {
+          "kind": "Pod",
+          "name": "production-nginx-5bf8bdf595-slhwr",
+          "namespace": "production"
+        },
+        {
+          "kind": "Service",
+          "name": "production-nginx-service",
+          "namespace": "production"
+        },
+        {
+          "kind": "Deployment",
+          "name": "production-nginx",
+          "namespace": "production"
+        },
+        {
+          "kind": "ReplicaSet",
+          "name": "production-nginx-5bf8bdf595",
+          "namespace": "production"
+        }
+      ]
+    },
+    {
+      "name": "staging-app",
+      "namespace": "staging",
+      "sync_status": "Synced",
+      "health_status": "Healthy",
+      "git_revision": "227d3b7a69b729a77660526d03eaa12fb3bd0048",
+      "target_revision": "main",
+      "repository": "https://github.com/saakibsheikh1/gitops-platform.git",
+      "manifest_path": "manifests/staging",
+      "resources": [
+        {
+          "kind": "Pod",
+          "name": "staging-nginx-69c649fbdd-5q5z2",
+          "namespace": "staging"
+        },
+        {
+          "kind": "Pod",
+          "name": "staging-nginx-69c649fbdd-ccj6p",
+          "namespace": "staging"
+        },
+        {
+          "kind": "Service",
+          "name": "staging-nginx-service",
+          "namespace": "staging"
+        },
+        {
+          "kind": "Deployment",
+          "name": "staging-nginx",
+          "namespace": "staging"
+        },
+        {
+          "kind": "ReplicaSet",
+          "name": "staging-nginx-6588b7b9f7",
+          "namespace": "staging"
+        },
+        {
+          "kind": "ReplicaSet",
+          "name": "staging-nginx-6746c9c854",
+          "namespace": "staging"
+        },
+        {
+          "kind": "ReplicaSet",
+          "name": "staging-nginx-67864d745",
+          "namespace": "staging"
+        },
+        {
+          "kind": "ReplicaSet",
+          "name": "staging-nginx-69756859cd",
+          "namespace": "staging"
+        },
+        {
+          "kind": "ReplicaSet",
+          "name": "staging-nginx-69c649fbdd",
+          "namespace": "staging"
+        },
+        {
+          "kind": "ReplicaSet",
+          "name": "staging-nginx-7d5fc546b4",
+          "namespace": "staging"
+        }
+      ]
+    }
+  ]
+}
