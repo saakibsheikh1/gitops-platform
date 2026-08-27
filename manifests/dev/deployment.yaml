@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: 495278513365.dkr.ecr.ap-south-1.amazonaws.com/cicd-rollback-pipeline@sha256:a12c9fbd04261802afc5cb2d8d8d980645dec82cfca86842e3a13f298a680553
+          image: 495278513365.dkr.ecr.ap-south-1.amazonaws.com/cicd-rollback-pipeline@sha256:7169261a9f2a86ce293e07d3bf0945c7e62e0c6e3b51be3c8f8b3425434a86a0
           ports:
             - containerPort: 80
