@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dev-nginx-config
+  namespace: dev
+data:
+  environment: "dev"
+  application: "gitops-platform"
+  version: "1.0"
