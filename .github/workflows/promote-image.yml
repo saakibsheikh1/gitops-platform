@@ -26,6 +26,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -76,7 +77,7 @@ jobs:
           format: table
           exit-code: "1"
           ignore-unfixed: true
-          severity: CRITICAL
+          severity: HIGH,CRITICAL
 
       - name: Update dev manifest
         shell: bash
@@ -89,6 +90,11 @@ jobs:
 
           echo "Updated dev manifest:"
           cat "$DEV_MANIFEST"
+
+      - name: Clean Trivy cache
+        shell: bash
+        run: |
+          rm -rf .cache
 
       - name: Commit dev promotion
         shell: bash
@@ -109,6 +115,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
+          rm -rf .cache
+
           BRANCH="promotion/staging-${{ steps.image.outputs.tag }}-${GITHUB_RUN_ID}"
 
           git checkout -b "$BRANCH"
