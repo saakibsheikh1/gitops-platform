@@ -1,0 +1,128 @@
+name: Image Promotion
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "ECR image tag to promote"
+        required: true
+        default: "1.1.0"
+
+  repository_dispatch:
+    types: [ecr-image-pushed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  AWS_REGION: ap-south-1
+  ECR_REPOSITORY: cicd-rollback-pipeline
+  ECR_REGISTRY: 495278513365.dkr.ecr.ap-south-1.amazonaws.com
+  DEV_MANIFEST: manifests/dev/deployment.yaml
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Determine image tag
+        id: image
+        shell: bash
+        run: |
+          if [ -n "${{ github.event.inputs.image_tag }}" ]; then
+            echo "tag=${{ github.event.inputs.image_tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${{ github.event.client_payload.image_tag }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Resolve image digest
+        id: digest
+        shell: bash
+        run: |
+          TAG="${{ steps.image.outputs.tag }}"
+
+          DIGEST=$(aws ecr describe-images \
+            --repository-name "$ECR_REPOSITORY" \
+            --image-ids imageTag="$TAG" \
+            --query 'imageDetails[0].imageDigest' \
+            --output text)
+
+          if [ -z "$DIGEST" ] || [ "$DIGEST" = "None" ]; then
+            echo "Image tag $TAG was not found in ECR"
+            exit 1
+          fi
+
+          echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
+          echo "Image digest: $DIGEST"
+
+      - name: Trivy security scan
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ steps.image.outputs.tag }}
+          format: table
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
+
+      - name: Update dev manifest
+        shell: bash
+        run: |
+          DIGEST="${{ steps.digest.outputs.digest }}"
+
+          sed -i -E \
+            "s#image: .*#image: ${ECR_REGISTRY}/${ECR_REPOSITORY}@${DIGEST}#" \
+            "$DEV_MANIFEST"
+
+          cat "$DEV_MANIFEST"
+
+      - name: Commit dev promotion
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add "$DEV_MANIFEST"
+
+          git commit \
+            -m "Promote image ${{ steps.image.outputs.tag }} to dev" \
+            || echo "No manifest changes"
+
+          git push
+
+      - name: Create staging promotion PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BRANCH="promotion/staging-${{ steps.image.outputs.tag }}-${GITHUB_RUN_ID}"
+
+          git checkout -b "$BRANCH"
+
+          sed -i -E \
+            "s#image: .*#image: ${ECR_REGISTRY}/${ECR_REPOSITORY}@${{ steps.digest.outputs.digest }}#" \
+            manifests/staging/deployment.yaml
+
+          git add manifests/staging/deployment.yaml
+
+          git commit \
+            -m "Promote image ${{ steps.image.outputs.tag }} to staging"
+
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "Promote ${{ steps.image.outputs.tag }} to staging" \
+            --body "Promotes the Trivy-approved image digest to staging."
