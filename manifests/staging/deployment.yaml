@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: nginx:1.27
+          image: 495278513365.dkr.ecr.ap-south-1.amazonaws.com/cicd-rollback-pipeline:staging-latest
           ports:
             - containerPort: 80
